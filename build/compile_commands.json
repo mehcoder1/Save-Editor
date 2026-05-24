@@ -1,0 +1,20 @@
+[
+{
+  "directory": "C:/Users/HP/Desktop/C++/Save-Editor/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/HP/Desktop/C++/Save-Editor/include -g -std=gnu++17 -o CMakeFiles\\save_tool.dir\\src\\main.cpp.obj -c C:\\Users\\HP\\Desktop\\C++\\Save-Editor\\src\\main.cpp",
+  "file": "C:/Users/HP/Desktop/C++/Save-Editor/src/main.cpp",
+  "output": "C:/Users/HP/Desktop/C++/Save-Editor/build/CMakeFiles/save_tool.dir/src/main.cpp.obj"
+},
+{
+  "directory": "C:/Users/HP/Desktop/C++/Save-Editor/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/HP/Desktop/C++/Save-Editor/include -g -std=gnu++17 -o CMakeFiles\\save_tool.dir\\src\\buffer.cpp.obj -c C:\\Users\\HP\\Desktop\\C++\\Save-Editor\\src\\buffer.cpp",
+  "file": "C:/Users/HP/Desktop/C++/Save-Editor/src/buffer.cpp",
+  "output": "C:/Users/HP/Desktop/C++/Save-Editor/build/CMakeFiles/save_tool.dir/src/buffer.cpp.obj"
+},
+{
+  "directory": "C:/Users/HP/Desktop/C++/Save-Editor/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/HP/Desktop/C++/Save-Editor/include -g -std=gnu++17 -o CMakeFiles\\save_tool.dir\\src\\save.cpp.obj -c C:\\Users\\HP\\Desktop\\C++\\Save-Editor\\src\\save.cpp",
+  "file": "C:/Users/HP/Desktop/C++/Save-Editor/src/save.cpp",
+  "output": "C:/Users/HP/Desktop/C++/Save-Editor/build/CMakeFiles/save_tool.dir/src/save.cpp.obj"
+}
+]
