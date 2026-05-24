@@ -1,7 +1,7 @@
 # ninja log v7
-34	1297	8013342406959817	CMakeFiles/save_tool.dir/src/save.cpp.obj	5372fbbd02bb03d8
-30	1333	8013338793290148	CMakeFiles/save_tool.dir/src/buffer.cpp.obj	b55c1c76a0fd6c18
-42	1139	8013335443451214	CMakeFiles/save_tool.dir/src/main.cpp.obj	17e1a2daaceb04c8
-1299	1793	8013342419615990	save_tool.exe	6e784d3bd2335042
-36	1126	8013343286515481	CMakeFiles/save_tool.dir/src/save.cpp.obj	5372fbbd02bb03d8
-1128	1515	8013343297438016	save_tool.exe	6e784d3bd2335042
+62	1387	8013654438666151	CMakeFiles/save_tool.dir/src/save.cpp.obj	5372fbbd02bb03d8
+589	6161	8013644168637691	CMakeFiles/save_tool.dir/src/buffer.cpp.obj	b55c1c76a0fd6c18
+30	1246	8013654951417113	CMakeFiles/save_tool.dir/src/main.cpp.obj	17e1a2daaceb04c8
+1248	1619	8013654963585306	save_tool.exe	6e784d3bd2335042
+29	1145	8013655586773134	CMakeFiles/save_tool.dir/src/main.cpp.obj	17e1a2daaceb04c8
+1147	1511	8013655597969440	save_tool.exe	6e784d3bd2335042

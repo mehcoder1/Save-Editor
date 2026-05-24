@@ -40,7 +40,7 @@ void modFile(char* fileName, char* stringOffset, char* value)
 
     readFileToBuffer(&bytes, fileName);
 
-    if (offset < 16)
+    if (offset != 16)
         writeU32(&bytes, offset, byte);
     else
         writeU8(&bytes, offset, (std::uint8_t)byte);
@@ -83,4 +83,43 @@ Save infoFile(char* fileName)
     freeBuffer(&bytes);
 
     return save;
+}
+
+void changeVersion(const char* fileName, std::uint32_t value)
+{
+    Buffer bytes{initBuffer(SAVE_SIZE)};
+
+    readFileToBuffer(&bytes, fileName);
+
+    writeU32(&bytes, VERSION_OFFSET, value);
+
+    writeBufferToFile(&bytes, fileName);
+
+    freeBuffer(&bytes);
+}
+
+void changeHealth(const char* fileName, std::uint32_t value)
+{
+    Buffer bytes{initBuffer(SAVE_SIZE)};
+
+    readFileToBuffer(&bytes, fileName);
+
+    writeU32(&bytes, HEALTH_OFFSET, value);
+
+    writeBufferToFile(&bytes, fileName);
+
+    freeBuffer(&bytes);
+}
+
+void changeCoins(const char* fileName, std::uint32_t value)
+{
+    Buffer bytes{initBuffer(SAVE_SIZE)};
+
+    readFileToBuffer(&bytes, fileName);
+
+    writeU32(&bytes, COINS_OFFSET, value);
+
+    writeBufferToFile(&bytes, fileName);
+
+    freeBuffer(&bytes);
 }
