@@ -25,7 +25,7 @@ Save infoFile(char* fileName);
 
 void saveFile(const char* fileName, Save save);
 
-void modFile(char* fileName, char* stringOffset, char* value);
+void modFile(const char* fileName, char* stringOffset, char* value);
 
 bool verifyFile(char* fileName);
 
@@ -34,5 +34,9 @@ void printSave(Save save);
 void changeVersion(const char* fileName, std::uint32_t value);
 void changeHealth(const char* fileName, std::uint32_t value);
 void changeCoins(const char* fileName, std::uint32_t value);
+
+void diffFiles(const char* fileName1, const char* fileName2);
+
+void backupFile(const char* fileName, Buffer* bytes);
 
 #endif

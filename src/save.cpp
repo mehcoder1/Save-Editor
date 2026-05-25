@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <iostream>
+#include <iomanip>
 
 void convertSaveToBuffer(Buffer* bytes, Save save)
 {
@@ -31,7 +32,7 @@ bool verifyFile(char* fileName)
     return true;
 }
 
-void modFile(char* fileName, char* stringOffset, char* value)
+void modFile(const char* fileName, char* stringOffset, char* value)
 {
     size_t offset {std::strtoul(stringOffset, nullptr, 16)};
     std::uint32_t byte{std::strtoul(value, nullptr, 10)};
@@ -39,6 +40,8 @@ void modFile(char* fileName, char* stringOffset, char* value)
     Buffer bytes{initBuffer(SAVE_SIZE)};
 
     readFileToBuffer(&bytes, fileName);
+
+    backupFile(fileName, &bytes);
 
     if (offset != 16)
         writeU32(&bytes, offset, byte);
@@ -91,6 +94,8 @@ void changeVersion(const char* fileName, std::uint32_t value)
 
     readFileToBuffer(&bytes, fileName);
 
+    backupFile(fileName, &bytes);
+
     writeU32(&bytes, VERSION_OFFSET, value);
 
     writeBufferToFile(&bytes, fileName);
@@ -103,6 +108,8 @@ void changeHealth(const char* fileName, std::uint32_t value)
     Buffer bytes{initBuffer(SAVE_SIZE)};
 
     readFileToBuffer(&bytes, fileName);
+
+    backupFile(fileName, &bytes);
 
     writeU32(&bytes, HEALTH_OFFSET, value);
 
@@ -117,9 +124,41 @@ void changeCoins(const char* fileName, std::uint32_t value)
 
     readFileToBuffer(&bytes, fileName);
 
+    backupFile(fileName, &bytes);
+
     writeU32(&bytes, COINS_OFFSET, value);
 
     writeBufferToFile(&bytes, fileName);
 
     freeBuffer(&bytes);
+}
+
+void diffFiles(const char* fileName1, const char* fileName2)
+{
+    Buffer bytes1{initBuffer(SAVE_SIZE)};
+    Buffer bytes2{initBuffer(SAVE_SIZE)};
+
+    readFileToBuffer(&bytes1, fileName1);
+    readFileToBuffer(&bytes2, fileName2);
+
+    for (size_t i{0}; i < bytes1.size; i++)
+    {
+        if (bytes1.data[i] != bytes2.data[i])
+        {
+            std::cout << std::setw(8) << std::setfill('0') << std::uppercase << std::hex << i << ": ";
+            std::cout << std::setw(2) << std::setfill('0') << std::uppercase << std::hex << int(bytes1.data[i]) << " -> ";
+            std::cout << std::setw(2) << std::setfill('0') << std::uppercase << std::hex << int(bytes2.data[i]) << '\n';
+        }
+    }
+
+    freeBuffer(&bytes1);
+    freeBuffer(&bytes2);
+}
+
+void backupFile(const char* fileName, Buffer* bytes)
+{
+    char backupFileName[256]{};
+    std::strcpy(backupFileName, fileName);
+    std::strcat(backupFileName, ".bak");
+    writeBufferToFile(bytes, backupFileName);
 }

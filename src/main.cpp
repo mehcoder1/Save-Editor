@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
         Buffer bytes{initBuffer(SAVE_SIZE)};
 
         readFileToBuffer(&bytes, argv[2]);
-        printFile(&bytes, bytes.size);
+        printFile(&bytes);
 
         freeBuffer(&bytes);
     }
@@ -90,6 +90,17 @@ int main(int argc, char* argv[])
 
         if (verifyFile(argv[2]))
             std::cout << "The file is good!";
+    }
+
+    else if(std::strcmp(argv[1], "diff") == 0)
+    {
+        if (argc < 4)
+        {
+            std::cout << "Not enough arguments. Usage: diff OLD_FILE NEW_FILE.";
+            return -1;
+        }
+
+        diffFiles(argv[2], argv[3]);
     }
 
     else 

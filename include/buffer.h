@@ -19,7 +19,7 @@ void writeU8(Buffer* bytes, size_t offset, std::uint8_t byte);
 void writeBufferToFile(Buffer* bytes, const char* fileName);
 void readFileToBuffer(Buffer* bytes, const char* fileName);
 
-void printFile(Buffer* bytes, size_t bytesLength);
+void printFile(Buffer* bytes);
 
 Buffer initBuffer(size_t size);
 void freeBuffer(Buffer* bytes);

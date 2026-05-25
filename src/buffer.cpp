@@ -97,21 +97,46 @@ void readFileToBuffer(Buffer* bytes, const char* fileName)
     fclose(file);
 }
 
-void printFile(Buffer* bytes, size_t bytesLength)
+void printFile(Buffer* bytes)
 {
     std::uint64_t offset{0};
-    for(int i{0}; i < bytesLength; i++)
-    {
-        if (offset % 16 == 0)
-        {
-            std::cout << '\n';
-            std::cout << std::setw(8) << std::setfill('0') << std::uppercase << std::hex << offset << ": ";
-        }
-        std::cout << std::setw(2) << std::setfill('0') << std::uppercase << std::hex << int(bytes->data[i]) << ' ';
-        offset+=1;
-    }
 
-    std::cout << std::endl;
+    for (size_t j{0}; j < bytes->size; j+=16)
+    {
+        for(size_t i{0}; i < 16; i++)
+        {
+            size_t index {j + i};
+
+            if (index < bytes->size)
+            {
+                if (offset % 16 == 0)
+                {
+                    std::cout << '\n';
+
+                    std::cout << std::setw(8) << std::setfill('0') << std::uppercase << std::hex << offset << ": ";
+                }
+                std::cout << std::setw(2) << std::setfill('0') << std::uppercase << std::hex << int(bytes->data[index]) << ' ';
+                offset+=1;
+            }
+        }
+
+        std::cout << '|';
+        for(size_t i{0}; i < 16; i++)
+        {
+            size_t index {j + i};
+
+            if (index < bytes->size)
+            {
+                if (bytes->data[index] >= 32 && bytes->data[index] <= 126)
+                    std::cout << bytes->data[index];
+                else
+                    std::cout << '.';
+            }
+        }
+        std::cout << '|';
+
+        std::cout << std::endl;
+    }
 }
 
 Buffer initBuffer(size_t size)
