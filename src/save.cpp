@@ -3,23 +3,51 @@
 
 #include <cstring>
 #include <iostream>
-#include <iomanip>
+#include <cstdlib>
 
-void convertSaveToBuffer(Buffer* bytes, Save save)
+void readName(const Buffer* bytes, char name[17])
+{
+    name[16] = '\0';
+
+    size_t offset {NAME_OFFSET};
+
+    for (size_t i{0}; i < 16; i++)
+    {
+        name[i] = readU8(bytes, offset);
+    }
+}
+
+void writeName(Buffer* bytes, const char* name)
+{
+    for (size_t i{0}; i < 16; i++)
+    {
+        if (i < strlen(name))
+            writeU8(bytes, NAME_OFFSET+i, name[i]);
+        else
+            writeU8(bytes, NAME_OFFSET+i, 0);
+    }
+}
+
+void convertSaveToBuffer(Buffer* bytes, const Save save)
 {
     std::memcpy(bytes->data, "SAVE", 4);
 
     writeU32(bytes, size_t(4), save.version);
     writeU32(bytes, size_t(8), save.health);
     writeU32(bytes, size_t(12), save.coins);
-    writeU8(bytes, size_t(16), save.initial);
+    writeName(bytes, save.name);
 }
 
 bool verifyFile(char* fileName)
 {
-    Buffer bytes{initBuffer(SAVE_SIZE)};
+    Buffer bytes {readFileToBuffer(fileName)};
 
-    readFileToBuffer(&bytes, fileName);
+    if (!(bytes.size >= SAVE_SIZE))
+    {   
+        std::cout << "File is corrupted!";
+        freeBuffer(&bytes);
+        return false;
+    }
 
     if (bytes.data[0] != 'S' || bytes.data[1] != 'A' || bytes.data[2] != 'V' || bytes.data[3] != 'E')
     {
@@ -37,16 +65,11 @@ void modFile(const char* fileName, char* stringOffset, char* value)
     size_t offset {std::strtoul(stringOffset, nullptr, 16)};
     std::uint32_t byte{std::strtoul(value, nullptr, 10)};
 
-    Buffer bytes{initBuffer(SAVE_SIZE)};
-
-    readFileToBuffer(&bytes, fileName);
+    Buffer bytes {readFileToBuffer(fileName)};
 
     backupFile(fileName, &bytes);
 
-    if (offset != 16)
-        writeU32(&bytes, offset, byte);
-    else
-        writeU8(&bytes, offset, (std::uint8_t)byte);
+    writeU8(&bytes, offset, (std::uint8_t)byte);
 
     writeBufferToFile(&bytes, fileName);
 
@@ -66,22 +89,21 @@ void saveFile(const char* fileName, Save save)
 
 void printSave(Save save)
 {
-    std::cout << "Version: " << save.version << "\nHealth: " << save.health << "\nCoins: " << save.coins << "\nInitial: " << save.initial;
+    std::cout << "Version: " << save.version << "\nHealth: " << save.health << "\nCoins: " << save.coins << "\nName: " << save.name;
 }
 
 Save infoFile(char* fileName)
 {
-    Buffer bytes{initBuffer(SAVE_SIZE)};
     Save save{};
 
-    readFileToBuffer(&bytes, fileName);
+    Buffer bytes {readFileToBuffer(fileName)};
 
     size_t offset{4};
 
     save.version = readU32(&bytes, offset);
     save.health = readU32(&bytes, offset);
     save.coins = readU32(&bytes, offset);
-    save.initial = readU8(&bytes, offset);
+    readName(&bytes, save.name);
 
     freeBuffer(&bytes);
 
@@ -90,9 +112,7 @@ Save infoFile(char* fileName)
 
 void changeVersion(const char* fileName, std::uint32_t value)
 {
-    Buffer bytes{initBuffer(SAVE_SIZE)};
-
-    readFileToBuffer(&bytes, fileName);
+    Buffer bytes {readFileToBuffer(fileName)};
 
     backupFile(fileName, &bytes);
 
@@ -105,9 +125,7 @@ void changeVersion(const char* fileName, std::uint32_t value)
 
 void changeHealth(const char* fileName, std::uint32_t value)
 {
-    Buffer bytes{initBuffer(SAVE_SIZE)};
-
-    readFileToBuffer(&bytes, fileName);
+    Buffer bytes {readFileToBuffer(fileName)};
 
     backupFile(fileName, &bytes);
 
@@ -120,9 +138,7 @@ void changeHealth(const char* fileName, std::uint32_t value)
 
 void changeCoins(const char* fileName, std::uint32_t value)
 {
-    Buffer bytes{initBuffer(SAVE_SIZE)};
-
-    readFileToBuffer(&bytes, fileName);
+    Buffer bytes {readFileToBuffer(fileName)};
 
     backupFile(fileName, &bytes);
 
@@ -133,26 +149,17 @@ void changeCoins(const char* fileName, std::uint32_t value)
     freeBuffer(&bytes);
 }
 
-void diffFiles(const char* fileName1, const char* fileName2)
+void changeName(const char* fileName, const char* name)
 {
-    Buffer bytes1{initBuffer(SAVE_SIZE)};
-    Buffer bytes2{initBuffer(SAVE_SIZE)};
+    Buffer bytes {readFileToBuffer(fileName)};
 
-    readFileToBuffer(&bytes1, fileName1);
-    readFileToBuffer(&bytes2, fileName2);
+    backupFile(fileName, &bytes);
 
-    for (size_t i{0}; i < bytes1.size; i++)
-    {
-        if (bytes1.data[i] != bytes2.data[i])
-        {
-            std::cout << std::setw(8) << std::setfill('0') << std::uppercase << std::hex << i << ": ";
-            std::cout << std::setw(2) << std::setfill('0') << std::uppercase << std::hex << int(bytes1.data[i]) << " -> ";
-            std::cout << std::setw(2) << std::setfill('0') << std::uppercase << std::hex << int(bytes2.data[i]) << '\n';
-        }
-    }
+    writeName(&bytes, name);
 
-    freeBuffer(&bytes1);
-    freeBuffer(&bytes2);
+    writeBufferToFile(&bytes, fileName);
+
+    freeBuffer(&bytes);
 }
 
 void backupFile(const char* fileName, Buffer* bytes)

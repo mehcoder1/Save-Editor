@@ -1,11 +1,12 @@
 #include "buffer.h"
+
 #include <cstdint>
 #include <cstdlib>
 #include <cstdio>
 #include <iostream>
 #include <iomanip>
 
-std::uint32_t readU32(Buffer* bytes, size_t& offset)
+std::uint32_t readU32(const Buffer* bytes, size_t& offset)
 {
     if (offset+4 > bytes->size)
     {
@@ -18,7 +19,7 @@ std::uint32_t readU32(Buffer* bytes, size_t& offset)
     return result;
 }
 
-std::uint8_t readU8(Buffer* bytes, size_t& offset)
+std::uint8_t readU8(const Buffer* bytes, size_t& offset)
 {
     if (offset+1 > bytes->size)
     {
@@ -76,7 +77,7 @@ void writeBufferToFile(Buffer* bytes, const char* fileName)
     fclose(file);
 }
 
-void readFileToBuffer(Buffer* bytes, const char* fileName)
+Buffer readFileToBuffer(const char* fileName)
 {
     FILE* file {fopen(fileName, "rb")};
 
@@ -86,15 +87,51 @@ void readFileToBuffer(Buffer* bytes, const char* fileName)
         std::exit(-1);
     }
 
-    size_t read{fread(bytes->data, 1, bytes->size, file)};
+    fseek(file, 0, SEEK_END);
 
-    if (read != bytes->size)
+    long fileSize {ftell(file)};
+
+    rewind(file);
+
+    if (fileSize < 0)
+    {
+        std::cout << "Failed to fetch file size!";
+        std::exit(-1);
+    }
+
+    Buffer bytes {initBuffer(size_t(fileSize))};
+
+    size_t read{fread(bytes.data, 1, bytes.size, file)};
+
+    if (read != bytes.size)
     {
         std::cout << "Could not read file, it may be corrupted!";
         std::exit(-1);
     }
 
     fclose(file);
+
+    return bytes;
+}
+
+// TODO: Add file size check and find solution if they differ
+void diffFiles(const char* fileName1, const char* fileName2)
+{
+    Buffer bytes1 {readFileToBuffer(fileName1)};
+    Buffer bytes2 {readFileToBuffer(fileName2)};
+
+    for (size_t i{0}; i < bytes1.size; i++)
+    {
+        if (bytes1.data[i] != bytes2.data[i])
+        {
+            std::cout << std::setw(8) << std::setfill('0') << std::uppercase << std::hex << i << ": ";
+            std::cout << std::setw(2) << std::setfill('0') << std::uppercase << std::hex << int(bytes1.data[i]) << " -> ";
+            std::cout << std::setw(2) << std::setfill('0') << std::uppercase << std::hex << int(bytes2.data[i]) << '\n';
+        }
+    }
+
+    freeBuffer(&bytes1);
+    freeBuffer(&bytes2);
 }
 
 void printFile(Buffer* bytes)
@@ -133,15 +170,13 @@ void printFile(Buffer* bytes)
                     std::cout << '.';
             }
         }
-        std::cout << '|';
-
-        std::cout << std::endl;
+        std::cout << "|\n";
     }
 }
 
 Buffer initBuffer(size_t size)
 {
-    Buffer bytes{(unsigned char*)malloc(size), size};
+    Buffer bytes = {(unsigned char*)malloc(size), size};
 
     if (bytes.data == nullptr)
     {

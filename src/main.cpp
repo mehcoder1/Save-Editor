@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
         if (argc < 3)
             return -1;
         
-        saveFile(argv[2], Save{1, 95, 6, 'm'});
+        saveFile(argv[2], Save{1, 95, 6, "Mehdi"});
         std::cout << "Saved file!";
     }
 
@@ -54,6 +54,11 @@ int main(int argc, char* argv[])
             changeCoins(argv[2], strtoul(argv[4], nullptr, 10));
             std::cout << "Updated coins amount!";
         }
+        else if (std::strcmp(argv[3], "name") == 0)
+        {
+            changeName(argv[2], argv[4]);
+            std::cout << "Updated name!";
+        }
         else
         {
             std::cout << "Valid fields: version, health, coins, name.";
@@ -75,9 +80,7 @@ int main(int argc, char* argv[])
         if (argc < 3)
             return -1;
 
-        Buffer bytes{initBuffer(SAVE_SIZE)};
-
-        readFileToBuffer(&bytes, argv[2]);
+        Buffer bytes {readFileToBuffer(argv[2])};
         printFile(&bytes);
 
         freeBuffer(&bytes);
@@ -105,7 +108,7 @@ int main(int argc, char* argv[])
 
     else 
     {
-        std::cout << "Commands: save, info, modify, read, verify.\n";
+        std::cout << "Commands: save, info, modify, read, verify, diff.\n";
     }
 
     return 0;

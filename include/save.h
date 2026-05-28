@@ -4,7 +4,7 @@
 #include <cstdint>
 #include "buffer.h"
 
-constexpr size_t SAVE_SIZE{17};
+constexpr size_t SAVE_SIZE{32};
 
 constexpr size_t VERSION_OFFSET{4};
 constexpr size_t HEALTH_OFFSET{8};
@@ -16,10 +16,10 @@ struct Save{
     std::uint32_t version{};
     std::uint32_t health{};
     std::uint32_t coins{};
-    std::uint8_t initial{};
+    char name[17]{};
 };
 
-void convertSaveToBuffer(Buffer* bytes, Save save);
+void convertSaveToBuffer(Buffer* bytes, const Save save);
 
 Save infoFile(char* fileName);
 
@@ -34,8 +34,7 @@ void printSave(Save save);
 void changeVersion(const char* fileName, std::uint32_t value);
 void changeHealth(const char* fileName, std::uint32_t value);
 void changeCoins(const char* fileName, std::uint32_t value);
-
-void diffFiles(const char* fileName1, const char* fileName2);
+void changeName(const char* fileName, const char* name);
 
 void backupFile(const char* fileName, Buffer* bytes);
 
