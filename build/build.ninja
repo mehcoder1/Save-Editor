@@ -76,6 +76,15 @@ build CMakeFiles/save_tool.dir/src/save.cpp.obj: CXX_COMPILER__save_tool_unscann
   OBJECT_FILE_DIR = CMakeFiles\save_tool.dir\src
   TARGET_SUPPORT_DIR = CMakeFiles\save_tool.dir
 
+build CMakeFiles/save_tool.dir/src/ItemArray.cpp.obj: CXX_COMPILER__save_tool_unscanned_Debug C$:/Users/HP/Desktop/C++/Save-Editor/src/ItemArray.cpp || cmake_object_order_depends_target_save_tool
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\save_tool.dir\src\ItemArray.cpp.obj.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -IC:/Users/HP/Desktop/C++/Save-Editor/include
+  OBJECT_DIR = CMakeFiles\save_tool.dir
+  OBJECT_FILE_DIR = CMakeFiles\save_tool.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\save_tool.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target save_tool
@@ -84,7 +93,7 @@ build CMakeFiles/save_tool.dir/src/save.cpp.obj: CXX_COMPILER__save_tool_unscann
 #############################################
 # Link the executable save_tool.exe
 
-build save_tool.exe: CXX_EXECUTABLE_LINKER__save_tool_Debug CMakeFiles/save_tool.dir/src/main.cpp.obj CMakeFiles/save_tool.dir/src/buffer.cpp.obj CMakeFiles/save_tool.dir/src/save.cpp.obj
+build save_tool.exe: CXX_EXECUTABLE_LINKER__save_tool_Debug CMakeFiles/save_tool.dir/src/main.cpp.obj CMakeFiles/save_tool.dir/src/buffer.cpp.obj CMakeFiles/save_tool.dir/src/save.cpp.obj CMakeFiles/save_tool.dir/src/ItemArray.cpp.obj
   CONFIG = Debug
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32

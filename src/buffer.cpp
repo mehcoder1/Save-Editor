@@ -105,7 +105,7 @@ Buffer readFileToBuffer(const char* fileName)
 
     if (read != bytes.size)
     {
-        std::cout << "Could not read file, it may be corrupted!";
+        std::cout << "Could not read file!";
         std::exit(-1);
     }
 

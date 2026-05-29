@@ -16,5 +16,11 @@
   "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/HP/Desktop/C++/Save-Editor/include -g -std=gnu++17 -o CMakeFiles\\save_tool.dir\\src\\save.cpp.obj -c C:\\Users\\HP\\Desktop\\C++\\Save-Editor\\src\\save.cpp",
   "file": "C:/Users/HP/Desktop/C++/Save-Editor/src/save.cpp",
   "output": "C:/Users/HP/Desktop/C++/Save-Editor/build/CMakeFiles/save_tool.dir/src/save.cpp.obj"
+},
+{
+  "directory": "C:/Users/HP/Desktop/C++/Save-Editor/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/HP/Desktop/C++/Save-Editor/include -g -std=gnu++17 -o CMakeFiles\\save_tool.dir\\src\\ItemArray.cpp.obj -c C:\\Users\\HP\\Desktop\\C++\\Save-Editor\\src\\ItemArray.cpp",
+  "file": "C:/Users/HP/Desktop/C++/Save-Editor/src/ItemArray.cpp",
+  "output": "C:/Users/HP/Desktop/C++/Save-Editor/build/CMakeFiles/save_tool.dir/src/ItemArray.cpp.obj"
 }
 ]

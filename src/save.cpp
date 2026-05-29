@@ -1,3 +1,4 @@
+#include "ItemArray.h"
 #include "buffer.h"
 #include "save.h"
 
@@ -28,14 +29,48 @@ void writeName(Buffer* bytes, const char* name)
     }
 }
 
+void readInventory(const Buffer* bytes, ItemArray* array)
+{
+    if (bytes->size <= SAVE_SIZE)
+    {
+        return;
+    }
+
+    size_t offset{INVENTORY_COUNT_OFFSET};
+    std::uint32_t inventoryCount {readU32(bytes, offset)};
+
+    reserve(array, inventoryCount);
+
+    for(std::uint32_t i{0}; i < inventoryCount; i++)
+    {
+        std::uint32_t id{readU32(bytes, offset)};
+        std::uint32_t amount{readU32(bytes, offset)};
+
+        push(array, Item{id, amount});
+    }
+}
+
+void writeInventory(Buffer* bytes, const ItemArray* array)
+{
+    for (size_t i{0}; i < array->size; i++)
+    {
+        Item item {array->data[i]};
+
+        writeU32(bytes, INVENTORY_OFFSET+(i*8), item.item_id);
+        writeU32(bytes, INVENTORY_OFFSET+((i*8)+4), item.item_amount);
+    }
+}
+
 void convertSaveToBuffer(Buffer* bytes, const Save save)
 {
     std::memcpy(bytes->data, "SAVE", 4);
 
-    writeU32(bytes, size_t(4), save.version);
-    writeU32(bytes, size_t(8), save.health);
-    writeU32(bytes, size_t(12), save.coins);
+    writeU32(bytes, VERSION_OFFSET, save.version);
+    writeU32(bytes, HEALTH_OFFSET, save.health);
+    writeU32(bytes, COINS_OFFSET, save.coins);
     writeName(bytes, save.name);
+    writeU32(bytes, INVENTORY_COUNT_OFFSET, save.item_count);
+    writeInventory(bytes, &save.items);
 }
 
 bool verifyFile(char* fileName)
@@ -78,7 +113,7 @@ void modFile(const char* fileName, char* stringOffset, char* value)
 
 void saveFile(const char* fileName, Save save)
 {
-    Buffer bytes{initBuffer(SAVE_SIZE)};
+    Buffer bytes{initBuffer(SAVE_SIZE+(save.item_count*8))};
 
     convertSaveToBuffer(&bytes, save);
 
@@ -89,12 +124,20 @@ void saveFile(const char* fileName, Save save)
 
 void printSave(Save save)
 {
-    std::cout << "Version: " << save.version << "\nHealth: " << save.health << "\nCoins: " << save.coins << "\nName: " << save.name;
+    std::cout << "Version: " << save.version << "\nHealth: " << save.health << "\nCoins: " << save.coins << "\nName: " << save.name << "\nInventory Count: " << save.item_count << "\n\n";
+
+    std::cout << "Inventory:\n";
+
+    for (size_t i{0}; i < save.item_count; i++)
+    {
+        std::cout << "   ID: " << save.items.data[i].item_id << ", Amount: " << save.items.data[i].item_amount << '\n';
+    }
 }
 
-Save infoFile(char* fileName)
+Save infoFile(const char* fileName)
 {
     Save save{};
+    save.items = initArray(0);
 
     Buffer bytes {readFileToBuffer(fileName)};
 
@@ -104,6 +147,11 @@ Save infoFile(char* fileName)
     save.health = readU32(&bytes, offset);
     save.coins = readU32(&bytes, offset);
     readName(&bytes, save.name);
+
+    offset+=16;
+    
+    save.item_count = readU32(&bytes, offset);
+    readInventory(&bytes, &save.items);
 
     freeBuffer(&bytes);
 
@@ -160,6 +208,51 @@ void changeName(const char* fileName, const char* name)
     writeBufferToFile(&bytes, fileName);
 
     freeBuffer(&bytes);
+}
+
+void pushItem(const char* fileName, const char* id, const char* amount)
+{
+    Save save {infoFile(fileName)};
+
+    Item item{strtoul(id, nullptr, 10), strtoul(amount, nullptr, 10)};
+
+    push(&save.items, item);
+
+    save.item_count = save.items.size;
+
+    Buffer bytes{initBuffer(SAVE_SIZE+(save.item_count*8))};
+
+    convertSaveToBuffer(&bytes, save);
+
+    writeBufferToFile(&bytes, fileName);
+
+    freeBuffer(&bytes);
+    freeArray(&save.items);
+}
+
+void popItem(const char* fileName)
+{
+    Save save {infoFile(fileName)};
+
+    if (save.item_count==0)
+    {
+        std::cout << "Inventory empty!";
+        freeArray(&save.items);
+        std::exit(0);
+    }
+
+    pop(&save.items);
+
+    save.item_count = save.items.size;
+
+    Buffer bytes{initBuffer(SAVE_SIZE+(save.item_count*8))};
+
+    convertSaveToBuffer(&bytes, save);
+
+    writeBufferToFile(&bytes, fileName);
+
+    freeBuffer(&bytes);
+    freeArray(&save.items);
 }
 
 void backupFile(const char* fileName, Buffer* bytes)

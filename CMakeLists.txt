@@ -9,6 +9,7 @@ add_executable(save_tool
     src/main.cpp
     src/buffer.cpp
     src/save.cpp
+    src/ItemArray.cpp
 )
 
 target_include_directories(save_tool PRIVATE include)
